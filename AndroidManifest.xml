@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:sharedUserId="com.google.uid.shared" android:versionCode="1110" android:versionName="1.1.10" package="org.pyneo.location">
+	<uses-permission android:name="android.permission.INSTALL_LOCATION_PROVIDER"/>
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+	<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+	<uses-permission android:name="android.permission.INTERNET"/>
+	<uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<!-- uses-permission android:name="android.permission.WAKE_LOCK"/ -->
+	<!-- uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"/ -->
+	<!-- uses-permission android:name="android.permission.UPDATE_DEVICE_STATS"/ -->
+	<application android:label="@string/app_label" android:process="org.pyneo.location">
+		<uses-library android:name="com.android.location.provider" android:required="true" />
+		<service
+			android:name="org.pyneo.location.WirelessLocation"
+			android:permission="android.permission.WRITE_SECURE_SETTINGS"
+			android:exported="true"
+			>
+			<intent-filter>
+				<action android:name="com.android.location.service.v2.NetworkLocationProvider"/>
+			</intent-filter>
+			<meta-data android:name="serviceVersion" android:value="1"/>
+		</service>
+	</application>
+</manifest>

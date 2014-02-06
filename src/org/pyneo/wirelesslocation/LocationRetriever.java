@@ -196,10 +196,12 @@ public class LocationRetriever {
 	}
 
 	public void start() {
+		if (MainService.DEBUG) Log.d(TAG, "start:");
 		loopThread.start();
 	}
 
 	public void stop() {
+		if (MainService.DEBUG) Log.d(TAG, "stop:");
 		loopThread.interrupt();
 	}
 }

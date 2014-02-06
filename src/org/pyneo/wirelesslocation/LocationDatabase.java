@@ -24,14 +24,9 @@ public class LocationDatabase {
 	private static final String COL_ACCURACY = "accuracy";
 	private static final String COL_BOOLS = "bools";
 	private static final String TABLE_LOCATION = "locations";
-	private static final String CREATE_TABLE =
-			"CREATE TABLE " + TABLE_LOCATION + "(" + COL_IDENT + " BLOB PRIMARY KEY, " + COL_LATITUDE + " REAL, " +
-			COL_LONGITUDE + " REAL, " + COL_ALTITUDE + " REAL, " + COL_ACCURACY + " REAL, " + COL_BOOLS + " INTEGER)";
-	private static final String INSERT_INTO =
-			"INSERT INTO " + TABLE_LOCATION + "(" + COL_IDENT + "," + COL_LATITUDE + "," + COL_LONGITUDE + "," +
-			COL_ALTITUDE + "," + COL_ACCURACY + "," + COL_BOOLS + ") VALUES(?,?,?,?,?,?)";
-	private static final String[] DEFAULT_QUERY_SELECT =
-			{COL_LATITUDE, COL_LONGITUDE, COL_ALTITUDE, COL_ACCURACY, COL_BOOLS};
+	private static final String CREATE_TABLE = "CREATE TABLE " + TABLE_LOCATION + "(" + COL_IDENT + " BLOB PRIMARY KEY, " + COL_LATITUDE + " REAL, " + COL_LONGITUDE + " REAL, " + COL_ALTITUDE + " REAL, " + COL_ACCURACY + " REAL, " + COL_BOOLS + " INTEGER)";
+	private static final String INSERT_INTO = "INSERT INTO " + TABLE_LOCATION + "(" + COL_IDENT + "," + COL_LATITUDE + "," + COL_LONGITUDE + "," + COL_ALTITUDE + "," + COL_ACCURACY + "," + COL_BOOLS + ") VALUES(?,?,?,?,?,?)";
+	private static final String[] DEFAULT_QUERY_SELECT = {COL_LATITUDE, COL_LONGITUDE, COL_ALTITUDE, COL_ACCURACY, COL_BOOLS};
 	private OpenHelper openHelper;
 
 	public LocationDatabase(Context context) {
@@ -39,6 +34,7 @@ public class LocationDatabase {
 	}
 
 	public <T extends PropSpec> LocationSpec<T> get(T propSpec) {
+		Log.d(TAG, "get:");
 		LocationSpec<T> locationSpec = get(propSpec.getIdentBlob());
 		if (locationSpec != null) {
 			locationSpec.setSource(propSpec);
@@ -47,6 +43,7 @@ public class LocationDatabase {
 	}
 
 	private <T extends PropSpec> LocationSpec<T> get(final byte[] identBlob) {
+		Log.d(TAG, "get:");
 		Cursor cursor = openHelper.getReadableDatabase().queryWithFactory(new SQLiteDatabase.CursorFactory() {
 			@Override
 			public Cursor newCursor(SQLiteDatabase database, SQLiteCursorDriver sqLiteCursorDriver, String s,
@@ -70,6 +67,7 @@ public class LocationDatabase {
 	}
 
 	private <T extends PropSpec> void insert(byte[] identBlob, LocationSpec<T> locationSpec) {
+		Log.d(TAG, "insert:");
 		SQLiteStatement statement = openHelper.getWritableDatabase().compileStatement(INSERT_INTO);
 		statement.bindBlob(1, identBlob);
 		statement.bindDouble(2, locationSpec.getLatitude());
@@ -85,6 +83,7 @@ public class LocationDatabase {
 	}
 
 	public <T extends PropSpec> void put(LocationSpec<T> locationSpec) {
+		Log.d(TAG, "put:");
 		// TODO update if exists!
 		insert(locationSpec.getSource().getIdentBlob(), locationSpec);
 	}
@@ -93,15 +92,18 @@ public class LocationDatabase {
 
 		private OpenHelper(Context context) {
 			super(context, FILE_NAME, null, DB_VERSION);
+			Log.d(TAG, "OpenHelper:");
 		}
 
 		@Override
 		public void onCreate(SQLiteDatabase database) {
+			Log.d(TAG, "onCreate:");
 			database.execSQL(CREATE_TABLE);
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase database, int i, int i2) {
+			Log.d(TAG, "onUpgrade:");
 			throw new RuntimeException("Cannot upgrade database from " + i + " to " + i2);
 		}
 	}

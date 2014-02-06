@@ -29,9 +29,9 @@ public class LocationSpec<T extends PropSpec> {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.accuracy = accuracy;
-		if ((latitude != 0) && (longitude != 0) && (accuracy != 0)) {
+		//if ((latitude != 0) && (longitude != 0) && (accuracy != 0)) {
 			undefined = false;
-		}
+		//}
 	}
 
 	public LocationSpec(T source, double latitude, double longitude, double accuracy, double altitude) {
@@ -40,21 +40,21 @@ public class LocationSpec<T extends PropSpec> {
 		this.longitude = longitude;
 		this.accuracy = accuracy;
 		this.altitude = altitude;
-		if ((latitude != 0) && (longitude != 0) && (accuracy != 0)) {
+		//if ((latitude != 0) && (longitude != 0) && (accuracy != 0)) {
 			undefined = false;
-		}
-		if (altitude != 0) {
+		//}
+		//if (altitude != 0) {
 			hasAltitude = true;
-		}
+		//}
 	}
 
 	public LocationSpec(double latitude, double longitude, double accuracy) {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.accuracy = accuracy;
-		if ((latitude != 0) && (longitude != 0) && (accuracy != 0)) {
+		//if ((latitude != 0) && (longitude != 0) && (accuracy != 0)) {
 			undefined = false;
-		}
+		//}
 	}
 
 	public LocationSpec(double latitude, double longitude, double altitude, double accuracy, boolean remote,
@@ -65,12 +65,12 @@ public class LocationSpec<T extends PropSpec> {
 		this.longitude = longitude;
 		this.altitude = altitude;
 		this.accuracy = accuracy;
-		if ((latitude != 0) && (longitude != 0) && (accuracy != 0)) {
+		//if ((latitude != 0) && (longitude != 0) && (accuracy != 0)) {
 			undefined = false;
-		}
-		if (altitude != 0) {
+		//}
+		//if (altitude != 0) {
 			hasAltitude = true;
-		}
+		//}
 	}
 
 	public LocationSpec(double latitude, double longitude, double altitude, double accuracy, int bools) {
@@ -113,8 +113,7 @@ public class LocationSpec<T extends PropSpec> {
 		double lon2 = degToRad(longitude);
 		double dLat = lat2 - lat1;
 		double dLon = lon2 - lon1;
-		double cordLength =
-				Math.pow(Math.sin(dLat / 2), 2) + (Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dLon / 2), 2));
+		double cordLength = Math.pow(Math.sin(dLat / 2), 2) + (Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dLon / 2), 2));
 		double centralAngle = 2 * Math.atan2(Math.sqrt(cordLength), Math.sqrt(1 - cordLength));
 		return EARTH_RADIUS * centralAngle;
 	}
@@ -132,8 +131,7 @@ public class LocationSpec<T extends PropSpec> {
 	}
 
 	public int getBools() {
-		return boolToInt(hasAltitude, 3) + boolToInt(undefined, 2) + boolToInt(remote, 1) +
-			   boolToInt(submitted);
+		return boolToInt(hasAltitude, 3) + boolToInt(undefined, 2) + boolToInt(remote, 1) + boolToInt(submitted);
 	}
 
 	private void setBools(int bools) {
@@ -174,12 +172,12 @@ public class LocationSpec<T extends PropSpec> {
 	@Override
 	public String toString() {
 		return "LocationSpec{" +
-			   "source=" + source +
-			   ", latitude=" + latitude +
-			   ", longitude=" + longitude +
-			   ", altitude=" + altitude +
-			   ", accuracy=" + accuracy +
-			   ", bools=" + getBools() +
-			   '}';
+			"source=" + source +
+			", latitude=" + latitude +
+			", longitude=" + longitude +
+			", altitude=" + altitude +
+			", accuracy=" + accuracy +
+			", bools=" + getBools() +
+			'}';
 	}
 }

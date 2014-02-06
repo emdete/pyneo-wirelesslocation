@@ -54,10 +54,7 @@ public class WifiSpec implements PropSpec {
 
 	@Override
 	public String toString() {
-		return "WifiSpec{" +
-			"mac=" + mac +
-			"ssid=" + ssid +
-			'}';
+		return "WifiSpec{" + "mac=" + mac + ", ssid=" + ssid + '}';
 	}
 
 	@Override

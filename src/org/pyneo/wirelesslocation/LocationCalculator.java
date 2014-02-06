@@ -88,25 +88,29 @@ public class LocationCalculator {
 		location.setAccuracy((float) (accSum / locationSpecs.size()));
 		location.setLatitude(latSum / locationSpecs.size());
 		location.setLongitude(lonSum / locationSpecs.size());
+		Log.d(TAG, "getAverageLocation: location=" + location);
 		return location;
 	}
 
 	public Location getCurrentCellLocation() {
 		Log.d(TAG, "getCurrentCellLocation:");
+		Location location = null;
 		Collection<LocationSpec<CellSpec>> cellLocationSpecs = getLocation(getCurrentCells());
-		if ((cellLocationSpecs == null) || cellLocationSpecs.isEmpty()) {
-			return null;
+		if (cellLocationSpecs != null && !cellLocationSpecs.isEmpty()) {
+			location = getAverageLocation(cellLocationSpecs);
+			Bundle b = new Bundle();
+			b.putString("networkLocationType", "cell");
+			location.setExtras(b);
 		}
-		Location location = getAverageLocation(cellLocationSpecs);
-		Bundle b = new Bundle();
-		b.putString("networkLocationType", "cell");
-		location.setExtras(b);
+		Log.d(TAG, "getCurrentCellLocation: location=" + location);
 		return location;
 	}
 
 	private Collection<CellSpec> getCurrentCells() {
 		Log.d(TAG, "getCurrentCells:");
-		return cellSpecRetriever.retrieveCellSpecs();
+		Collection<CellSpec> ret = cellSpecRetriever.retrieveCellSpecs();
+		Log.d(TAG, "getCurrentCells: ret=" + ret);
+		return ret;
 	}
 
 	public Location getCurrentLocation() {
@@ -114,8 +118,10 @@ public class LocationCalculator {
 		Location cellLocation = getCurrentCellLocation();
 		Location wifiLocation = getCurrentWifiLocation(cellLocation);
 		if (wifiLocation != null) {
+			Log.d(TAG, "getCurrentLocation: location=" + wifiLocation);
 			return wifiLocation;
 		}
+		Log.d(TAG, "getCurrentLocation: location=" + cellLocation);
 		return cellLocation;
 	}
 
@@ -147,6 +153,7 @@ public class LocationCalculator {
 			b.putString("networkLocationType", "wifi");
 			location.setExtras(b);
 		}
+		Log.d(TAG, "getCurrentWifiLocation: location=" + location);
 		return location;
 	}
 
@@ -166,6 +173,7 @@ public class LocationCalculator {
 				locationSpecs.add(locationSpec);
 			}
 		}
+		Log.d(TAG, "getLocation: locationSpecs=" + locationSpecs);
 		return locationSpecs;
 	}
 

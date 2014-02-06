@@ -92,8 +92,8 @@ public class CellSpecRetriever {
 				addCellSpecFromCellLocation(cellSpecs, mcc, mnc, telephonyManager.getCellLocation());
 				addCellSpecsFromNeighboringCellInfo(cellSpecs, mcc, mnc, telephonyManager.getNeighboringCellInfo());
 				if (MainService.DEBUG) {
-					Log.d(TAG, "Found "+cellSpecs.size()+" Cells");
-					for (Object cellSpec: cellSpecs) Log.d(TAG, "Found "+cellSpec);
+					Log.d(TAG, "retrieveCellSpecs: Found "+cellSpecs.size()+" Cells");
+					for (Object cellSpec: cellSpecs) Log.d(TAG, "retrieveCellSpecs: Found "+cellSpec);
 				}
 			}
 		}

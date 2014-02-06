@@ -13,10 +13,10 @@ import org.pyneo.wirelesslocation.MainService;
 
 public class WirelessIdLocation implements LocationSource<CellSpec> {
 	private static final String TAG = "org.pyneo.wirelesslocation.cellapi.WirelessIdLocation";
+
 	private static final String NAME = "CellApi WirelessIdLocation";
 	private static final String DESCRIPTION = "Read cell locations cellapi";
 	private static final String COPYRIGHT = "© pyneo 2014";
-
 	static final private java.util.Random random = new java.util.Random();
 	static final private String url = "https://cell.vodafone.com/loc";
 	static final private String rid = "pyneo";
@@ -47,6 +47,7 @@ public class WirelessIdLocation implements LocationSource<CellSpec> {
 
 	@Override
 	public Collection<LocationSpec<CellSpec>> retrieveLocation(Collection<CellSpec> specs) {
+		Log.d(TAG, "retrieveLocation:");
 		List<LocationSpec<CellSpec>> locationSpecs = new ArrayList<LocationSpec<CellSpec>>();
 		for (CellSpec spec : specs) {
 			try {
@@ -84,13 +85,13 @@ public class WirelessIdLocation implements LocationSource<CellSpec> {
 				Log.e(TAG, "retrieveLocation: exception=" + e);
 			}
 		}
+		Log.d(TAG, "retrieveLocation: locationSpecs=" + locationSpecs);
 		return locationSpecs;
 	}
 
 	static String generateMD5(String input) throws Exception {
 		java.security.MessageDigest digest = java.security.MessageDigest.getInstance("md5");
-		return new java.math.BigInteger(1, digest.digest(
-			input.getBytes("utf-8"))).toString(16).toLowerCase();
+		return new java.math.BigInteger(1, digest.digest( input.getBytes("utf-8"))).toString(16).toLowerCase();
 	}
 
 	static java.util.Map<String,String> decode(String line) throws Exception {

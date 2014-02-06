@@ -10,9 +10,6 @@ import org.pyneo.wirelesslocation.cellapi.ReverseGeocode;
 import org.pyneo.wirelesslocation.cellapi.WirelessIdLocation;
 import org.pyneo.wirelesslocation.cellular.CellSpec;
 import org.pyneo.wirelesslocation.cellular.CellSpecRetriever;
-//import org.pyneo.wirelesslocation.provider.NetworkLocationProvider;
-//import org.pyneo.wirelesslocation.retriever.CellSpecRetriever;
-//import org.pyneo.wirelesslocation.retriever.WifiSpecRetriever;
 import org.pyneo.wirelesslocation.wlan.WifiSpec;
 import org.pyneo.wirelesslocation.wlan.WifiSpecRetriever;
 
@@ -105,7 +102,7 @@ public class MainService extends Service {
 			}
 		}
 		if (DEBUG) Log.d(TAG, "onBind: ret=" + ret);
-		return null;
+		return ret;
 	}
 
 	@Override

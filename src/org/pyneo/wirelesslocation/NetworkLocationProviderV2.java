@@ -126,7 +126,7 @@ public class NetworkLocationProviderV2 extends LocationProviderBase implements N
 
 	@Override
 	public void onLocationChanged(Location location) {
-		if (MainService.DEBUG) Log.d(TAG, "onLocationChanged:");
+		if (MainService.DEBUG) Log.d(TAG, "onLocationChanged: location=" + location);
 		if (location != null) {
 			background.setLastTime(SystemClock.elapsedRealtime());
 			background.setLastLocation(location);

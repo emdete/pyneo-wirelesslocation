@@ -16,12 +16,12 @@
 
 package com.android.internal.location;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.location.LocationRequest;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @hide

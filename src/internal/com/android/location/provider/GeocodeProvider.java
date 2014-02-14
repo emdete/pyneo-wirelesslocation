@@ -16,13 +16,12 @@
 
 package internal.com.android.location.provider;
 
-import android.os.IBinder;
+import java.util.List;
 
 import android.location.Address;
 import android.location.GeocoderParams;
 import android.location.IGeocodeProvider;
-
-import java.util.List;
+import android.os.IBinder;
 
 /**
  * Base class for geocode providers implemented as unbundled services.

@@ -16,10 +16,10 @@
 
 package android.net;
 
-import android.os.Parcelable;
-import android.os.Parcel;
-
 import java.util.EnumMap;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Describes the status of a network interface of a given type

@@ -16,11 +16,11 @@
 
 package android.location;
 
+import java.util.Locale;
+
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import java.util.Locale;
 
 /**
  * This class contains extra parameters to pass to an IGeocodeProvider

@@ -1,23 +1,18 @@
 package org.pyneo.wirelesslocation;
 
+import internal.com.android.location.provider.LocationProvider;
+
 import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.os.WorkSource;
 import android.util.Log;
-import internal.com.android.location.provider.LocationProvider;
-
-import org.pyneo.wirelesslocation.NetworkLocationProvider;
-import org.pyneo.wirelesslocation.cellapi.WirelessLocationThread;
 
 public class NetworkLocationProviderV1 extends LocationProvider implements NetworkLocationProvider {
-	private static final String TAG = "org.pyneo.wirelesslocation.NetworkLocationProvider";
+	private static final String TAG = "org.pyneo.wirelesslocation.NetworkLocationProviderV1";
 
-	private static final String IDENTIFIER = "network";
-	private WirelessLocationThread background;
 	private long autoTime;
 	private boolean autoUpdate;
 	private boolean enabledByService = false;
@@ -26,7 +21,6 @@ public class NetworkLocationProviderV1 extends LocationProvider implements Netwo
 	public NetworkLocationProviderV1() {
 		autoUpdate = false;
 		autoTime = Long.MAX_VALUE;
-		background = new WirelessLocationThread();
 	}
 
 	@Deprecated
@@ -34,62 +28,39 @@ public class NetworkLocationProviderV1 extends LocationProvider implements Netwo
 		this();
 	}
 
-	public NetworkLocationProviderV1(LocationCalculator data) {
-		this();
-		background.setCalculator(data);
-	}
-
 	@Override
 	public synchronized void disable() {
-		background.setLocationProvider(null);
-		background.disable();
 		enabledByService = false;
 	}
 
 	@Override
 	public synchronized void enable() {
 		enabledByService = true;
-		if (enabledBySetting)
-			enableBackground();
-	}
-
-	private void enableBackground() {
-		background.disable();
-		background = new WirelessLocationThread(background);
-		background.setLocationProvider(this);
-		background.start();
 	}
 
 	@Override
 	public boolean isActive() {
-		return background != null && background.isAlive() && background.isActive();
+		return enabledBySetting && enabledByService;
 	}
 
 	@Override
 	public void onAddListener(final int uid, final WorkSource ws) {
-		if (MainService.DEBUG) {
-			Log.d(TAG, uid + " is listening as " + ws != null ? (ws + " (contents:" + ws.describeContents() + ")") :
-					   "[unknown WorkSource]");
-		}
+		if (MainService.DEBUG) Log.d(TAG, uid + " is listening as " + ws != null ? (ws + " (contents:" + ws.describeContents() + ")") : "[unknown WorkSource]");
 	}
 
 	@Override
 	public void onDisable() {
 		enabledBySetting = false;
-		background.disable();
 	}
 
 	@Override
 	public void onEnable() {
 		enabledBySetting = true;
-		if (enabledByService)
-			enableBackground();
 	}
 
 	@Override
 	public void onEnableLocationTracking(final boolean enable) {
 		autoUpdate = enable;
-		background.setAuto(autoUpdate, autoTime);
 	}
 
 	@Override
@@ -99,8 +70,7 @@ public class NetworkLocationProviderV1 extends LocationProvider implements Netwo
 
 	@Override
 	public String onGetInternalState() {
-		if (MainService.DEBUG)
-			Log.w(TAG, "Internal State not yet implemented. The application may not work.");
+		if (MainService.DEBUG) Log.w(TAG, "Internal State not yet implemented. The application may not work.");
 		return "[INTERNAL STATE NOT IMPLEMENTED]";
 	}
 
@@ -116,7 +86,7 @@ public class NetworkLocationProviderV1 extends LocationProvider implements Netwo
 
 	@Override
 	public long onGetStatusUpdateTime() {
-		return background.getLastTime();
+		return SystemClock.elapsedRealtime();
 	}
 
 	@Override
@@ -126,12 +96,8 @@ public class NetworkLocationProviderV1 extends LocationProvider implements Netwo
 
 	@Override
 	public void onLocationChanged(Location location) {
+		if (MainService.DEBUG) Log.d(TAG, "Reporting: " + location);
 		if (location != null) {
-			background.setLastTime(SystemClock.elapsedRealtime());
-			background.setLastLocation(location);
-			if (MainService.DEBUG) {
-				Log.d(TAG, "Reporting: " + location);
-			}
 			reportLocation(location);
 		}
 	}
@@ -177,7 +143,6 @@ public class NetworkLocationProviderV1 extends LocationProvider implements Netwo
 	@Override
 	public void onSetMinTime(final long minTime, final WorkSource ws) {
 		autoTime = minTime;
-		background.setAuto(autoUpdate, autoTime);
 	}
 
 	@Override
@@ -197,18 +162,10 @@ public class NetworkLocationProviderV1 extends LocationProvider implements Netwo
 
 	@Override
 	public void onUpdateLocation(final Location location) {
-		background.setLastLocation(location);
 	}
 
 	@Override
 	public void onUpdateNetworkState(final int state, final NetworkInfo info) {
-		if (MainService.DEBUG)
-			Log.d(TAG, "onUpdateNetworkState: " + state + " (" + info + ")");
+		if (MainService.DEBUG) Log.d(TAG, "onUpdateNetworkState: " + state + " (" + info + ")");
 	}
-
-	@Override
-	public void setCalculator(LocationCalculator locationCalculator) {
-		background.setCalculator(locationCalculator);
-	}
-
 }

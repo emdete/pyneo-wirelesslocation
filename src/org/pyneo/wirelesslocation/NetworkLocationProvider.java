@@ -1,12 +1,12 @@
 package org.pyneo.wirelesslocation;
 
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.IBinder;
 
 
 public interface NetworkLocationProvider {
-	String NETWORK_LOCATION_TYPE = "networkLocationType";
+	final static String NETWORK_LOCATION_TYPE = "networkLocationType";
+	final static String IDENTIFIER = "network";
 
 	void disable();
 
@@ -17,6 +17,4 @@ public interface NetworkLocationProvider {
 	boolean isActive();
 
 	void onLocationChanged(Location paramLocation);
-
-	void setCalculator(LocationCalculator locationCalculator);
 }

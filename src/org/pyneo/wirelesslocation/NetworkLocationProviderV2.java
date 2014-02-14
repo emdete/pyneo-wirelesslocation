@@ -1,7 +1,5 @@
 package org.pyneo.wirelesslocation;
 
-import java.lang.reflect.Method;
-
 import android.annotation.TargetApi;
 import android.location.Criteria;
 import android.location.Location;
@@ -13,16 +11,12 @@ import internal.com.android.location.provider.LocationProviderBase;
 import internal.com.android.location.provider.LocationRequestUnbundled;
 import internal.com.android.location.provider.ProviderPropertiesUnbundled;
 import internal.com.android.location.provider.ProviderRequestUnbundled;
-
-import org.pyneo.wirelesslocation.NetworkLocationProvider;
-import org.pyneo.wirelesslocation.cellapi.WirelessLocationThread;
+import java.lang.reflect.Method;
 
 @TargetApi(17)
 public class NetworkLocationProviderV2 extends LocationProviderBase implements NetworkLocationProvider {
 	private static final String TAG = "org.pyneo.wirelesslocation.NetworkLocationProviderV2";
 
-	private final static String IDENTIFIER = "network";
-	private WirelessLocationThread background = new WirelessLocationThread();
 	private boolean enabledByService = false;
 	private boolean enabledBySetting = true;
 
@@ -49,8 +43,6 @@ public class NetworkLocationProviderV2 extends LocationProviderBase implements N
 	@Override
 	public synchronized void disable() {
 		if (MainService.DEBUG) Log.d(TAG, "disable:");
-		background.setLocationProvider(null);
-		background.disable();
 		enabledByService = false;
 	}
 
@@ -58,37 +50,24 @@ public class NetworkLocationProviderV2 extends LocationProviderBase implements N
 	public synchronized void enable() {
 		if (MainService.DEBUG) Log.d(TAG, "enable:");
 		enabledByService = true;
-		if (enabledBySetting)
-			enableBackground();
-	}
-
-	private void enableBackground() {
-		if (MainService.DEBUG) Log.d(TAG, "enableBackground:");
-		background.disable();
-		background = new WirelessLocationThread(background);
-		background.setLocationProvider(this);
-		background.start();
 	}
 
 	@Override
 	public boolean isActive() {
 		if (MainService.DEBUG) Log.d(TAG, "isActive:");
-		return background != null && background.isAlive() && background.isActive();
+		return enabledByService && enabledBySetting;
 	}
 
 	@Override
 	public synchronized void onDisable() {
 		if (MainService.DEBUG) Log.d(TAG, "onDisable:");
 		enabledBySetting = false;
-		background.disable();
 	}
 
 	@Override
 	public synchronized void onEnable() {
 		if (MainService.DEBUG) Log.d(TAG, "onEnable:");
 		enabledBySetting = true;
-		if (enabledByService)
-			enableBackground();
 	}
 
 	@Override
@@ -100,7 +79,49 @@ public class NetworkLocationProviderV2 extends LocationProviderBase implements N
 	@Override
 	public long onGetStatusUpdateTime() {
 		if (MainService.DEBUG) Log.d(TAG, "onGetStatusUpdateTime:");
-		return background.getLastTime();
+		return SystemClock.elapsedRealtime();
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+		if (MainService.DEBUG) Log.d(TAG, "onLocationChanged: location=" + location);
+		if (location != null) {
+			if (MainService.DEBUG) Log.d(TAG, "Reporting: " + location);
+			reportLocation(location);
+		}
+	}
+
+	@Override
+	public void onSetRequest(final ProviderRequestUnbundled requests, final WorkSource ws) {
+		if (MainService.DEBUG) Log.d(TAG, "onSetRequest: requests=" + requests + ", ws=" + ws);
+		long autoTime = Long.MAX_VALUE;
+		boolean autoUpdate = false;
+		for (final LocationRequestUnbundled request : requests.getLocationRequests()) {
+			if (MainService.DEBUG) Log.d(TAG, "onSetRequest: request=" + request);
+			if (request.getInterval() < autoTime) {
+				autoTime = request.getInterval();
+			}
+			autoUpdate = true;
+		}
+		if (autoTime < 1000) {
+			autoTime = 1000;
+		}
+	}
+
+	static public Location dummy(double lat, double lon, double acc) {
+		Location location = new Location("network");
+		location.setProvider(NetworkLocationProvider.IDENTIFIER);
+		location.setLatitude(lat);
+		location.setLongitude(lon);
+		location.setAccuracy((float)acc);
+		location.setSpeed(0.0f);
+		location.setBearing(0.0f);
+		location.setAltitude(1.0);
+		//location.setElapsedRealtimeNanos(SystemClock.elapsedRealtime());
+		location.setTime(System.currentTimeMillis());
+		androidLocationLocationMakeComplete(location);
+		androidLocationLocationSetExtraLocation(location, new Location(location));
+		return location;
 	}
 
 	private static void androidLocationLocationMakeComplete(Location location) {
@@ -114,51 +135,13 @@ public class NetworkLocationProviderV2 extends LocationProviderBase implements N
 		}
 	}
 
-	public static void androidLocationLocationSetExtraLocation(Location location, String key, Location value) {
+	public static void androidLocationLocationSetExtraLocation(Location location, Location value) {
 		try {
 			Class<?> clazz = Class.forName("android.location.Location");
 			Method setExtraLocation = clazz.getDeclaredMethod("setExtraLocation", String.class, Location.class);
-			setExtraLocation.invoke(location, key, value);
+			setExtraLocation.invoke(location, "noGPSLocation", value);
 		} catch (Exception e) {
 			Log.w("android.location.Location.setExtraLocation", e);
 		}
 	}
-
-	@Override
-	public void onLocationChanged(Location location) {
-		if (MainService.DEBUG) Log.d(TAG, "onLocationChanged: location=" + location);
-		if (location != null) {
-			background.setLastTime(SystemClock.elapsedRealtime());
-			background.setLastLocation(location);
-			location.setTime(System.currentTimeMillis());
-			androidLocationLocationMakeComplete(location);
-			androidLocationLocationSetExtraLocation(location, "noGPSLocation", new Location(location));
-			if (MainService.DEBUG) Log.d(TAG, "Reporting: " + location);
-			reportLocation(location);
-		}
-	}
-
-	@Override
-	public void onSetRequest(final ProviderRequestUnbundled requests, final WorkSource ws) {
-		if (MainService.DEBUG) Log.d(TAG, "onSetRequest:");
-		long autoTime = Long.MAX_VALUE;
-		boolean autoUpdate = false;
-		for (final LocationRequestUnbundled request : requests.getLocationRequests()) {
-			if (request.getInterval() < autoTime) {
-				autoTime = request.getInterval();
-			}
-			autoUpdate = true;
-		}
-		if (autoTime < 5000) {
-			autoTime = 5000;
-		}
-		background.setAuto(autoUpdate, autoTime);
-	}
-
-	@Override
-	public void setCalculator(LocationCalculator locationCalculator) {
-		if (MainService.DEBUG) Log.d(TAG, "setCalculator:");
-		background.setCalculator(locationCalculator);
-	}
-
 }

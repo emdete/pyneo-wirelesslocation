@@ -16,17 +16,20 @@
 
 package internal.com.android.location.provider;
 
+import java.io.FileDescriptor;
+import java.lang.reflect.Method;
+
 import android.content.Context;
 import android.location.ILocationManager;
 import android.location.Location;
-import android.os.*;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
+
 import com.android.internal.location.ILocationProvider;
 import com.android.internal.location.ProviderProperties;
 import com.android.internal.location.ProviderRequest;
-
-import java.io.FileDescriptor;
-import java.lang.reflect.Method;
 
 /**
  * Base class for location providers implemented as unbundled services.

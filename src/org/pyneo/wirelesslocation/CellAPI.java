@@ -53,38 +53,43 @@ public class CellAPI {
 	private static final String rid = "pyneo";
 	private static final String secret = "aN3Peiv6";
 	private static final Random random = new Random();
+	private static String last = null;
+	private static Double[] location = null;
 
 	static public Double[] retrieveLocation(Map<String,Object> map) {
-		Double[] location = null;
 		if (MainService.DEBUG) Log.d(TAG, "retrieveLocation: map=" + map);
-		try {
-			map = resolve(
-				map.get("mcc").toString(),
-				map.get("mnc").toString(),
-				map.get("lac").toString(),
-				map.get("rncid").toString(),
-				map.get("cid").toString(),
-				//map.get("uid").toString()
-				"");
-			int rcd = Integer.parseInt(map.get("rcd").toString());
-			if (rcd < 2030) { // 2030: based on mcc
-				final double lat = Double.parseDouble(map.get("lat").toString());
-				final double lon = Double.parseDouble(map.get("lon").toString());
-				double rad;
-				final double altitude = 0.0;
-				if (rcd == 2000) // rad included
-					rad = Double.parseDouble(map.get("rad").toString());
-				else
-					rad = 5000.0;
-				location = new Double[]{lat, lon, altitude, rad};
+		String current = map.get("mcc").toString() + "." + map.get("mnc").toString() + "." + map.get("lac").toString() + "." + map.get("cid").toString();
+		if (!current.equals(last) || location == null) {
+			try {
+				map = resolve(
+					map.get("mcc").toString(),
+					map.get("mnc").toString(),
+					map.get("lac").toString(),
+					"0",
+					map.get("cid").toString(),
+					//map.get("uid").toString()
+					"");
+				int rcd = Integer.parseInt(map.get("rcd").toString());
+				if (rcd < 2030) { // 2030: based on mcc
+					final double lat = Double.parseDouble(map.get("lat").toString());
+					final double lon = Double.parseDouble(map.get("lon").toString());
+					double rad;
+					final double altitude = 0.0;
+					if (rcd == 2000) // rad included
+						rad = Double.parseDouble(map.get("rad").toString());
+					else
+						rad = 5000.0;
+					location = new Double[]{lat, lon, altitude, rad};
+				}
+				else {
+					Log.e(TAG, "retrieveLocation: error=" + rcd);
+				}
+				last = current;
 			}
-			else {
-				Log.e(TAG, "retrieveLocation: error=" + rcd);
+			catch (Exception e) {
+				Log.e(TAG, "retrieveLocation: exception=" + e);
+				if (MainService.DEBUG) Log.wtf(TAG, "retrieveLocation: exception=" + e, e);
 			}
-		}
-		catch (Exception e) {
-			Log.e(TAG, "retrieveLocation: exception=" + e);
-			if (MainService.DEBUG) Log.wtf(TAG, "retrieveLocation: exception=" + e, e);
 		}
 		if (MainService.DEBUG) Log.d(TAG, "retrieveLocation: location=" + location);
 		return location;
@@ -288,14 +293,12 @@ public class CellAPI {
 		String prefix = idx<0? "": Integer.toString(idx)+".";
 		int i = value.getCid();
 		if (i < 0x10000) {
-			map.put("cid", i);
 			map.put("type", "gsm");
 		}
 		else {
-			map.put("rncid", i / 0x10000);
-			map.put("cid", i % 0x10000);
 			map.put("type", "wcdma");
 		}
+		map.put("cid", i);
 		map.put("lac", value.getLac());
 		map.put("psc", value.getPsc());
 		return;

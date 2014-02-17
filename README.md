@@ -41,3 +41,10 @@ the information or anything around the project. If you start using this
 software you agree that you are competent to do so and are responsible for any
 kind of results doing so.
 
+Acknowledgment
+==============
+
+The base for a location-provider is badly documented. So i used a different,
+wonderful project named μg which comes with a network location provider. Thanks
+alot for the support and the work to mar-v-in!
+

@@ -97,7 +97,7 @@ public class MainService extends Service {
 		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN) {
 			nlprovider = new NetworkLocationProviderV1();
 		} else {
-			nlprovider = new NetworkLocationProviderV2();
+			nlprovider = new NetworkLocationProviderV2(context);
 		}
 		geoprovider = new GeocodeProvider();
 	}

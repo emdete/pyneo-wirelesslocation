@@ -96,8 +96,9 @@ public class NetworkLocationProviderV1 extends LocationProvider implements Netwo
 
 	@Override
 	public void onLocationChanged(Location location) {
-		if (MainService.DEBUG) Log.d(TAG, "Reporting: " + location);
+		if (MainService.DEBUG) Log.d(TAG, "onLocationChanged:");
 		if (location != null) {
+			if (MainService.DEBUG) Log.d(TAG, "onLocationChanged: " + location);
 			reportLocation(location);
 		}
 	}

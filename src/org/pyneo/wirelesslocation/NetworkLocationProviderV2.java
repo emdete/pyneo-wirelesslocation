@@ -5,6 +5,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.content.Context;
 import android.os.WorkSource;
 import android.util.Log;
 import internal.com.android.location.provider.LocationProviderBase;
@@ -18,8 +19,9 @@ public class NetworkLocationProviderV2 extends LocationProviderBase implements N
 
 	private boolean enabledByService = false;
 	private boolean enabledBySetting = true;
+	private WirelessEnvListener wirelessEnvListener;
 
-	public NetworkLocationProviderV2() {
+	public NetworkLocationProviderV2(Context context) {
 		super(TAG, ProviderPropertiesUnbundled.create(
 			true, // requiresNetwork
 			false, // requiresSatellite
@@ -31,12 +33,7 @@ public class NetworkLocationProviderV2 extends LocationProviderBase implements N
 			Criteria.POWER_LOW, // powerRequirement
 			Criteria.ACCURACY_FINE)); // accuracy
 		if (MainService.DEBUG) Log.d(TAG, "NetworkLocationProviderV2:");
-	}
-
-	@Deprecated
-	public NetworkLocationProviderV2(final boolean internal) {
-		this();
-		if (MainService.DEBUG) Log.d(TAG, "NetworkLocationProviderV2:");
+		wirelessEnvListener = new WirelessEnvListener(context, this);
 	}
 
 	@Override
@@ -83,27 +80,40 @@ public class NetworkLocationProviderV2 extends LocationProviderBase implements N
 
 	@Override
 	public void onLocationChanged(Location location) {
-		if (MainService.DEBUG) Log.d(TAG, "onLocationChanged: location=" + location);
+		if (MainService.DEBUG) Log.d(TAG, "onLocationChanged:");
 		if (location != null) {
-			if (MainService.DEBUG) Log.d(TAG, "Reporting: " + location);
+			if (MainService.DEBUG) Log.d(TAG, "onLocationChanged: " + location);
 			reportLocation(location);
 		}
 	}
 
 	@Override
 	public void onSetRequest(final ProviderRequestUnbundled requests, final WorkSource ws) {
-		if (MainService.DEBUG) Log.d(TAG, "onSetRequest: requests=" + requests + ", ws=" + ws);
-		long autoTime = Long.MAX_VALUE;
-		boolean autoUpdate = false;
-		for (final LocationRequestUnbundled request : requests.getLocationRequests()) {
-			if (MainService.DEBUG) Log.d(TAG, "onSetRequest: request=" + request);
-			if (request.getInterval() < autoTime) {
-				autoTime = request.getInterval();
+		try {
+			if (MainService.DEBUG) Log.d(TAG, "onSetRequest: requests=" + requests + ", ws=" + ws);
+			wirelessEnvListener.disable();
+			long autoTime = Long.MAX_VALUE;
+			boolean autoUpdate = false;
+			for (final LocationRequestUnbundled request : requests.getLocationRequests()) {
+				if (MainService.DEBUG) Log.d(TAG, "onSetRequest: request=" + request);
+				if (autoTime > request.getInterval()) {
+					autoTime = request.getInterval();
+				}
+				autoUpdate = true;
 			}
-			autoUpdate = true;
+			if (autoUpdate) {
+				if (autoTime < 1000) {
+					autoTime = 1000;
+				}
+				wirelessEnvListener.setTime(autoTime);
+				wirelessEnvListener.enable();
+			}
+			else {
+				wirelessEnvListener.disable();
+			}
 		}
-		if (autoTime < 1000) {
-			autoTime = 1000;
+		catch (Exception e) {
+			Log.e(TAG, "onSetRequest: e=" + e, e);
 		}
 	}
 }

@@ -12,8 +12,8 @@ system-apps are allowed to install a location-provider and only a single
 network-location-provider may be installed you need an Android with no such app
 installed. A plain cyanogenmod without gapps will do.
 
-Way I
------
+The adb Way
+-----------
 
 To overwrite the original system-app or to install the app on a gapps-free
 device do the following steps: Switch adb to run as root with `adb root`, make
@@ -23,23 +23,19 @@ place with `adb push bin/NetworkLocation-debug.apk
 /cache/dalvik-cache/system@app@NetworkLocation.apk@classes.dex` and reboot your
 device with `adb shell reboot` or by the gui.
 
-Way II
-------
+The GUI Way
+-----------
 
-If you have a gapps free device you can jump over this step, other way you have
-to deinstall the original app. For this move it out of /system to be not a
-system app anymore (for example with "/system/ app mover" which is avaiable
-free & open source), deinstall, reboot and then follow the next steps.
+If you have a gapps free device you can jump over this step. To
+deinstall the original app move it out of /system to be not a
+system-app anymore (for example with "/system/ app mover" which is avaiable
+free & open source), deinstall the app, reboot and then follow the next steps.
 
 You can use adb to install the app (`adb install NetworkLocation-debug.apk`) or
 install it from an url. You have to allow to install apps from unknown places
 in that case. After you have installed this app you have to make it a system
 app. You can do so by one of the nice apps for that (for example "/system/ app
-mover" which is avaiable free & open source) or make it "by hand": You just get
-a shell on the device (`adb shell`), get root (`su`), remount the system
-directory rewritable (`mount -o remount,rw /system`) and copy the app there
-(`cp /data/app/NetworkLocation.apk /system/app/NetworkLocation.apk`). After
-that you have to reboot and clean the dalvik cache.
+mover" which is avaiable free & open source).
 
 The original app may have different names. Common ones are NetworkLocation.apk
 or com.google.android.location-1.apk. The app-name in the GUI is

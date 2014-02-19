@@ -70,7 +70,7 @@ public class NetworkLocationProviderV1 extends LocationProvider implements Netwo
 
 	@Override
 	public String onGetInternalState() {
-		if (MainService.DEBUG) Log.w(TAG, "Internal State not yet implemented. The application may not work.");
+		Log.w(TAG, "Internal State not yet implemented. The application may not work.");
 		return "[INTERNAL STATE NOT IMPLEMENTED]";
 	}
 

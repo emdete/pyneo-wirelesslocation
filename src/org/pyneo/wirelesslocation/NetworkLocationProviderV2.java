@@ -102,8 +102,8 @@ public class NetworkLocationProviderV2 extends LocationProviderBase implements N
 				autoUpdate = true;
 			}
 			if (autoUpdate) {
-				if (autoTime < 1000) {
-					autoTime = 1000;
+				if (autoTime < 1500) {
+					autoTime = 1500;
 				}
 				wirelessEnvListener.setTime(autoTime);
 				wirelessEnvListener.enable();

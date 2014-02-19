@@ -30,6 +30,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -74,7 +75,7 @@ public class WirelessEnvListener extends PhoneStateListener implements Runnable 
 			executor.execute(new Runnable() {
 				public void run() {
 					Double[] location = CellAPI.retrieveLocation(map);
-					if (MainService.DEBUG) Log.d(TAG, "onCellInfoChanged: loc=" + location);
+					if (MainService.DEBUG) Log.d(TAG, "onCellInfoChanged: loc=" + Arrays.toString(location));
 					if (location != null) {
 						networkLocationProvider.onLocationChanged(dummy(location[0], location[1], location[2], location[3]));
 					}

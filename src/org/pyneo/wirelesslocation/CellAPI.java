@@ -36,6 +36,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.Collection;
 import java.util.List;
@@ -91,7 +92,7 @@ public class CellAPI {
 				if (MainService.DEBUG) Log.wtf(TAG, "retrieveLocation: exception=" + e, e);
 			}
 		}
-		if (MainService.DEBUG) Log.d(TAG, "retrieveLocation: location=" + location);
+		if (MainService.DEBUG) Log.d(TAG, "retrieveLocation: location=" + Arrays.toString(location));
 		return location;
 	}
 
@@ -328,17 +329,22 @@ public class CellAPI {
 
 	static void toMap(Map<String,Object> map, List<CellInfo> value, TelephonyManager telephonyManager) throws Exception {
 		if (value == null) {
-			// fallback:
-			map.put("version", "pre-api17");
-			int mcc = NeighboringCellInfo.UNKNOWN_CID;
-			int mnc = NeighboringCellInfo.UNKNOWN_CID;
-			String mccmnc = telephonyManager.getNetworkOperator();
-			if (mccmnc != null && mccmnc.length() >= 5 && mccmnc.length() <= 6) {
-				mcc = Integer.parseInt(mccmnc.substring(0, 3));
-				mnc = Integer.parseInt(mccmnc.substring(3));
+			if (MainService.DEBUG) Log.d(TAG, "toMap: no CellInfo delivered");
+			value = telephonyManager.getAllCellInfo();
+			if (value == null) {
+				if (MainService.DEBUG) Log.d(TAG, "toMap: no CellInfo retrieved by getAllCellInfo");
+				// fallback:
+				map.put("version", "pre-api17");
+				int mcc = NeighboringCellInfo.UNKNOWN_CID;
+				int mnc = NeighboringCellInfo.UNKNOWN_CID;
+				String mccmnc = telephonyManager.getNetworkOperator();
+				if (mccmnc != null && mccmnc.length() >= 5 && mccmnc.length() <= 6) {
+					mcc = Integer.parseInt(mccmnc.substring(0, 3));
+					mnc = Integer.parseInt(mccmnc.substring(3));
+				}
+				toMap(map, -1, telephonyManager.getCellLocation(), mcc, mnc);
+				toMap(map, telephonyManager.getNeighboringCellInfo(), mcc, mnc);
 			}
-			toMap(map, -1, telephonyManager.getCellLocation(), mcc, mnc);
-			toMap(map, telephonyManager.getNeighboringCellInfo(), mcc, mnc);
 		}
 		else {
 			try {

@@ -22,7 +22,7 @@ public class MainService extends Service {
 
 	public static final boolean DEBUG;
 	static {
-		DEBUG = true; // Log.isLoggable("nlp", Log.DEBUG);
+		DEBUG = Log.isLoggable("nlp", Log.DEBUG);
 	}
 
 	private static Context context;

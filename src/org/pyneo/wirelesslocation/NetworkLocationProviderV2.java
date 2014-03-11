@@ -15,7 +15,7 @@ import internal.com.android.location.provider.ProviderRequestUnbundled;
 
 @TargetApi(17)
 public class NetworkLocationProviderV2 extends LocationProviderBase implements NetworkLocationProvider {
-	private static final String TAG = "org.pyneo.wirelesslocation.NetworkLocationProviderV2";
+	private static final String TAG = NetworkLocationProviderV2.class.getName();
 
 	private boolean enabledByService = false;
 	private boolean enabledBySetting = true;

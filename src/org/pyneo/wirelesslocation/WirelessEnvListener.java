@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.List;
 
 public class WirelessEnvListener extends PhoneStateListener implements Runnable {
-	private static final String TAG = "org.pyneo.wirelesslocation.WirelessEnvListener";
+	private static final String TAG = WirelessEnvListener.class.getName();
 
 	ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
 	long intervalSecs = 5000;

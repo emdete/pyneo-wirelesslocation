@@ -48,7 +48,7 @@ import org.json.JSONObject;
 import java.math.BigInteger;
 
 public class CellAPI {
-	private static final String TAG = "org.pyneo.wirelesslocation.CellAPI";
+	private static final String TAG = CellAPI.class.getName();
 
 	private static final String url = "https://cell.vodafone.com/loc";
 	private static final String rid = "pyneo";

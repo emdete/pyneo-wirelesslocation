@@ -10,7 +10,7 @@ import android.location.GeocoderParams;
 import android.util.Log;
 
 public class GeocodeProvider extends internal.com.android.location.provider.GeocodeProvider {
-	private static final String TAG = "org.pyneo.wirelesslocation.GeocodeProvider";
+	private static final String TAG = GeocodeProvider.class.getName();
 	private static final String UNKNOWN_RESULT_ERROR = "unknown";
 
 	void disable() {

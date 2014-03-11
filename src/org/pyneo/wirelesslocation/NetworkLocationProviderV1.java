@@ -11,7 +11,7 @@ import android.os.WorkSource;
 import android.util.Log;
 
 public class NetworkLocationProviderV1 extends LocationProvider implements NetworkLocationProvider {
-	private static final String TAG = "org.pyneo.wirelesslocation.NetworkLocationProviderV1";
+	private static final String TAG = NetworkLocationProviderV1.class.getName();
 
 	private long autoTime;
 	private boolean autoUpdate;

@@ -18,7 +18,7 @@ import android.provider.Settings;
 import android.util.Log;
 
 public class MainService extends Service {
-	private static final String TAG = "org.pyneo.wirelesslocation.MainService";
+	private static final String TAG = MainService.class.getName();
 
 	public static final boolean DEBUG;
 	static {

@@ -40,7 +40,7 @@ import android.util.Log;
  */
 public abstract class LocationProvider {
 
-	private static final String TAG = "LocationProvider";
+	private static final String TAG = LocationProvider.class.getName();
 
 	private ILocationManager mLocationManager;
 

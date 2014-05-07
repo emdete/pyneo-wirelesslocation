@@ -16,6 +16,7 @@ import internal.com.android.location.provider.ProviderRequestUnbundled;
 @TargetApi(17)
 public class NetworkLocationProviderV2 extends LocationProviderBase implements NetworkLocationProvider {
 	private static final String TAG = NetworkLocationProviderV2.class.getName();
+	private static final boolean DEBUG = MainService.DEBUG;
 
 	private boolean enabledByService = false;
 	private boolean enabledBySetting = true;
@@ -32,57 +33,57 @@ public class NetworkLocationProviderV2 extends LocationProviderBase implements N
 			false, // supportsBearing
 			Criteria.POWER_LOW, // powerRequirement
 			Criteria.ACCURACY_FINE)); // accuracy
-		if (MainService.DEBUG) Log.d(TAG, "NetworkLocationProviderV2:");
+		if (DEBUG) Log.d(TAG, "NetworkLocationProviderV2:");
 		wirelessEnvListener = new WirelessEnvListener(context, this);
 	}
 
 	@Override
 	public synchronized void disable() {
-		if (MainService.DEBUG) Log.d(TAG, "disable:");
+		if (DEBUG) Log.d(TAG, "disable:");
 		enabledByService = false;
 	}
 
 	@Override
 	public synchronized void enable() {
-		if (MainService.DEBUG) Log.d(TAG, "enable:");
+		if (DEBUG) Log.d(TAG, "enable:");
 		enabledByService = true;
 	}
 
 	@Override
 	public boolean isActive() {
-		if (MainService.DEBUG) Log.d(TAG, "isActive:");
+		if (DEBUG) Log.d(TAG, "isActive:");
 		return enabledByService && enabledBySetting;
 	}
 
 	@Override
 	public synchronized void onDisable() {
-		if (MainService.DEBUG) Log.d(TAG, "onDisable:");
+		if (DEBUG) Log.d(TAG, "onDisable:");
 		enabledBySetting = false;
 	}
 
 	@Override
 	public synchronized void onEnable() {
-		if (MainService.DEBUG) Log.d(TAG, "onEnable:");
+		if (DEBUG) Log.d(TAG, "onEnable:");
 		enabledBySetting = true;
 	}
 
 	@Override
 	public int onGetStatus(final Bundle arg0) {
-		if (MainService.DEBUG) Log.d(TAG, "onGetStatus:");
+		if (DEBUG) Log.d(TAG, "onGetStatus:");
 		return android.location.LocationProvider.AVAILABLE;
 	}
 
 	@Override
 	public long onGetStatusUpdateTime() {
-		if (MainService.DEBUG) Log.d(TAG, "onGetStatusUpdateTime:");
+		if (DEBUG) Log.d(TAG, "onGetStatusUpdateTime:");
 		return SystemClock.elapsedRealtime();
 	}
 
 	@Override
 	public void onLocationChanged(Location location) {
-		if (MainService.DEBUG) Log.d(TAG, "onLocationChanged:");
+		if (DEBUG) Log.d(TAG, "onLocationChanged:");
 		if (location != null) {
-			if (MainService.DEBUG) Log.d(TAG, "onLocationChanged: " + location);
+			if (DEBUG) Log.d(TAG, "onLocationChanged: " + location);
 			reportLocation(location);
 		}
 	}
@@ -90,12 +91,12 @@ public class NetworkLocationProviderV2 extends LocationProviderBase implements N
 	@Override
 	public void onSetRequest(final ProviderRequestUnbundled requests, final WorkSource ws) {
 		try {
-			if (MainService.DEBUG) Log.d(TAG, "onSetRequest: requests=" + requests + ", ws=" + ws);
+			if (DEBUG) Log.d(TAG, "onSetRequest: requests=" + requests + ", ws=" + ws);
 			wirelessEnvListener.disable();
 			long autoTime = Long.MAX_VALUE;
 			boolean autoUpdate = false;
 			for (final LocationRequestUnbundled request : requests.getLocationRequests()) {
-				if (MainService.DEBUG) Log.d(TAG, "onSetRequest: request=" + request);
+				if (DEBUG) Log.d(TAG, "onSetRequest: request=" + request);
 				if (autoTime > request.getInterval()) {
 					autoTime = request.getInterval();
 				}

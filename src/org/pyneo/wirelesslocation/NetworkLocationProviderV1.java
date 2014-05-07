@@ -12,6 +12,7 @@ import android.util.Log;
 
 public class NetworkLocationProviderV1 extends LocationProvider implements NetworkLocationProvider {
 	private static final String TAG = NetworkLocationProviderV1.class.getName();
+	private static final boolean DEBUG = MainService.DEBUG;
 
 	private long autoTime;
 	private boolean autoUpdate;
@@ -45,7 +46,7 @@ public class NetworkLocationProviderV1 extends LocationProvider implements Netwo
 
 	@Override
 	public void onAddListener(final int uid, final WorkSource ws) {
-		if (MainService.DEBUG) Log.d(TAG, uid + " is listening as " + ws != null ? (ws + " (contents:" + ws.describeContents() + ")") : "[unknown WorkSource]");
+		if (DEBUG) Log.d(TAG, uid + " is listening as " + ws != null ? (ws + " (contents:" + ws.describeContents() + ")") : "[unknown WorkSource]");
 	}
 
 	@Override
@@ -96,9 +97,9 @@ public class NetworkLocationProviderV1 extends LocationProvider implements Netwo
 
 	@Override
 	public void onLocationChanged(Location location) {
-		if (MainService.DEBUG) Log.d(TAG, "onLocationChanged:");
+		if (DEBUG) Log.d(TAG, "onLocationChanged:");
 		if (location != null) {
-			if (MainService.DEBUG) Log.d(TAG, "onLocationChanged: " + location);
+			if (DEBUG) Log.d(TAG, "onLocationChanged: " + location);
 			reportLocation(location);
 		}
 	}
@@ -167,6 +168,6 @@ public class NetworkLocationProviderV1 extends LocationProvider implements Netwo
 
 	@Override
 	public void onUpdateNetworkState(final int state, final NetworkInfo info) {
-		if (MainService.DEBUG) Log.d(TAG, "onUpdateNetworkState: " + state + " (" + info + ")");
+		if (DEBUG) Log.d(TAG, "onUpdateNetworkState: " + state + " (" + info + ")");
 	}
 }

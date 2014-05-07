@@ -38,6 +38,7 @@ import java.util.List;
 
 public class WirelessEnvListener extends PhoneStateListener implements Runnable {
 	private static final String TAG = WirelessEnvListener.class.getName();
+	private static final boolean DEBUG = MainService.DEBUG;
 
 	ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
 	long intervalSecs = 5000;
@@ -54,28 +55,28 @@ public class WirelessEnvListener extends PhoneStateListener implements Runnable 
 	}
 
 	void enable() {
-		if (MainService.DEBUG) Log.d(TAG, "enable:");
+		if (DEBUG) Log.d(TAG, "enable:");
 		executor.scheduleAtFixedRate(this, intervalSecs / 2, intervalSecs, TimeUnit.MILLISECONDS);
 	}
 
 	void disable() {
-		if (MainService.DEBUG) Log.d(TAG, "disable:");
+		if (DEBUG) Log.d(TAG, "disable:");
 		executor.shutdownNow();
 		executor = new ScheduledThreadPoolExecutor(1);
 	}
 
 	@Override
 	public void onCellInfoChanged(List<CellInfo> cellInfos) {
-		if (MainService.DEBUG) Log.d(TAG, "onCellInfoChanged: cellInfos=" + cellInfos);
+		if (DEBUG) Log.d(TAG, "onCellInfoChanged: cellInfos=" + cellInfos);
 		try {
 			final Map<String,Object> map = new HashMap<String,Object>();
 			CellAPI.toMap(map, cellInfos, telephonyManager);
-			if (MainService.DEBUG) Log.d(TAG, "onCellInfoChanged: map=" + map);
+			if (DEBUG) Log.d(TAG, "onCellInfoChanged: map=" + map);
 			telephonyManager.listen(this, PhoneStateListener.LISTEN_NONE);
 			executor.execute(new Runnable() {
 				public void run() {
 					Double[] location = CellAPI.retrieveLocation(map);
-					if (MainService.DEBUG) Log.d(TAG, "onCellInfoChanged: loc=" + Arrays.toString(location));
+					if (DEBUG) Log.d(TAG, "onCellInfoChanged: loc=" + Arrays.toString(location));
 					if (location != null) {
 						networkLocationProvider.onLocationChanged(dummy(location[0], location[1], location[2], location[3]));
 					}
@@ -96,7 +97,7 @@ public class WirelessEnvListener extends PhoneStateListener implements Runnable 
 		location.setAccuracy((float)acc);
 		location.setSpeed(0.0f);
 		location.setBearing(0.0f);
-		//location.setElapsedRealtimeNanos(SystemClock.elapsedRealtime());
+		//location.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
 		location.setTime(System.currentTimeMillis());
 		androidLocationLocationMakeComplete(location);
 		androidLocationLocationSetExtraLocation(location, new Location(location));
@@ -104,7 +105,7 @@ public class WirelessEnvListener extends PhoneStateListener implements Runnable 
 	}
 
 	static void androidLocationLocationMakeComplete(Location location) {
-		if (MainService.DEBUG) Log.d(TAG, "androidLocationLocationMakeComplete:");
+		if (DEBUG) Log.d(TAG, "androidLocationLocationMakeComplete:");
 		try {
 			Class<?> clazz = Class.forName("android.location.Location");
 			Method makeComplete = clazz.getDeclaredMethod("makeComplete");
@@ -125,7 +126,7 @@ public class WirelessEnvListener extends PhoneStateListener implements Runnable 
 	}
 
 	public void run() {
-		if (MainService.DEBUG) Log.d(TAG, "run:");
+		if (DEBUG) Log.d(TAG, "run:");
 		try {
 			telephonyManager.listen(this, PhoneStateListener.LISTEN_CELL_INFO | PhoneStateListener.LISTEN_SERVICE_STATE);
 			CellLocation.requestLocationUpdate();

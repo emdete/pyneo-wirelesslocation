@@ -49,6 +49,7 @@ import java.math.BigInteger;
 
 public class CellAPI {
 	private static final String TAG = CellAPI.class.getName();
+	private static final boolean DEBUG = MainService.DEBUG;
 
 	private static final String url = "https://cell.vodafone.com/loc";
 	private static final String rid = "pyneo";
@@ -58,7 +59,7 @@ public class CellAPI {
 	private static Double[] location = null;
 
 	static public Double[] retrieveLocation(Map<String,Object> map) {
-		if (MainService.DEBUG) Log.d(TAG, "retrieveLocation: map=" + map);
+		if (DEBUG) Log.d(TAG, "retrieveLocation: map=" + map);
 		String current = map.get("mcc").toString() + "." + map.get("mnc").toString() + "." + map.get("lac").toString() + "." + map.get("cid").toString();
 		if (!current.equals(last) || location == null) {
 			try {
@@ -89,10 +90,10 @@ public class CellAPI {
 			}
 			catch (Exception e) {
 				Log.e(TAG, "retrieveLocation: exception=" + e);
-				if (MainService.DEBUG) Log.wtf(TAG, "retrieveLocation: exception=" + e, e);
+				if (DEBUG) Log.wtf(TAG, "retrieveLocation: exception=" + e, e);
 			}
 		}
-		if (MainService.DEBUG) Log.d(TAG, "retrieveLocation: location=" + Arrays.toString(location));
+		if (DEBUG) Log.d(TAG, "retrieveLocation: location=" + Arrays.toString(location));
 		return location;
 	}
 
@@ -170,7 +171,7 @@ public class CellAPI {
 		map.put("ri", ri);
 		map.put("la", la);
 		map.put("ci", ci);
-		if (MainService.DEBUG) Log.d(TAG, "resolve: parameter=" + map);
+		if (DEBUG) Log.d(TAG, "resolve: parameter=" + map);
 		java.net.URLConnection conn = new java.net.URL(url + "?" + encode(map)).openConnection();
 		// fill in the meta parameter:
 		conn.setRequestProperty("x-vf-csl-aup", aup);
@@ -179,7 +180,7 @@ public class CellAPI {
 		conn.setRequestProperty("x-vf-csl-uid", uid);
 		conn.setRequestProperty("x-vf-csl-ver", ver);
 		conn.setRequestProperty("x-correlation-id", correlation_id);
-		if (MainService.DEBUG) Log.d(TAG, "resolve: meta=" + conn.getRequestProperties());
+		if (DEBUG) Log.d(TAG, "resolve: meta=" + conn.getRequestProperties());
 		java.io.InputStream input = conn.getInputStream();
 		byte[] buffer = new byte[1024];
 		String response = "";
@@ -190,7 +191,7 @@ public class CellAPI {
 				response += new String(buffer, 0, amount);
 		}
 		Map<String,Object> ret = decode(response);
-		if (MainService.DEBUG) Log.d(TAG, "resolve: response=" + ret);
+		if (DEBUG) Log.d(TAG, "resolve: response=" + ret);
 		return ret;
 	}
 
@@ -329,10 +330,10 @@ public class CellAPI {
 
 	static void toMap(Map<String,Object> map, List<CellInfo> value, TelephonyManager telephonyManager) throws Exception {
 		if (value == null) {
-			if (MainService.DEBUG) Log.d(TAG, "toMap: no CellInfo delivered");
+			if (DEBUG) Log.d(TAG, "toMap: no CellInfo delivered");
 			value = telephonyManager.getAllCellInfo();
 			if (value == null) {
-				if (MainService.DEBUG) Log.d(TAG, "toMap: no CellInfo retrieved by getAllCellInfo");
+				if (DEBUG) Log.d(TAG, "toMap: no CellInfo retrieved by getAllCellInfo");
 				// fallback:
 				map.put("version", "pre-api17");
 				int mcc = NeighboringCellInfo.UNKNOWN_CID;

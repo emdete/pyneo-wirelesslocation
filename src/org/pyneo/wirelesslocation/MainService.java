@@ -19,11 +19,8 @@ import android.util.Log;
 
 public class MainService extends Service {
 	private static final String TAG = MainService.class.getName();
-
-	public static final boolean DEBUG;
-	static {
-		DEBUG = Log.isLoggable("nlp", Log.DEBUG);
-	}
+	public static final boolean DEBUG = true;
+	//static { DEBUG = Log.isLoggable("nlp", Log.DEBUG); }
 
 	private static Context context;
 	private NetworkLocationProvider nlprovider;

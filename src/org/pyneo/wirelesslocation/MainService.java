@@ -19,7 +19,7 @@ import android.util.Log;
 
 public class MainService extends Service {
 	private static final String TAG = MainService.class.getName();
-	public static final boolean DEBUG = false;
+	public static boolean DEBUG = false;
 	static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 
 	private static Context context;

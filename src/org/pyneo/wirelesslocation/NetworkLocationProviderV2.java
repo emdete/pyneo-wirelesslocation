@@ -16,7 +16,7 @@ import internal.com.android.location.provider.ProviderRequestUnbundled;
 @TargetApi(17)
 public class NetworkLocationProviderV2 extends LocationProviderBase implements NetworkLocationProvider {
 	private static final String TAG = NetworkLocationProviderV2.class.getName();
-	private static final boolean DEBUG = false;
+	private static boolean DEBUG = false;
 	static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 
 	private boolean enabledByService = false;

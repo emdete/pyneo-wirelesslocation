@@ -42,10 +42,11 @@ or com.google.android.location-1.apk. The app-name in the GUI is
 NetworkLocation or (german) Netzwerkstandort.
 
 Debugging
-=========
+---------
 
 The app does alot of debug logging but that level must be enabled. you can do
-so by issuing `setprop log.tag.nlp DEBUG` in a root-shell on the device.
+so by issuing `setprop log.tag.org.pyneo.android DEBUG` in a shell on
+the device.
 
 Building
 ========

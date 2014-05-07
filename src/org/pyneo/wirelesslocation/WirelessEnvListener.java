@@ -47,7 +47,7 @@ import org.pyneo.android.wirelessid.WifiId;
 
 public class WirelessEnvListener extends PhoneStateListener implements Runnable {
 	private static final String TAG = WirelessEnvListener.class.getName();
-	private static final boolean DEBUG = false;
+	private static boolean DEBUG = false;
 	static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 
 	ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);

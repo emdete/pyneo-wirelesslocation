@@ -28,7 +28,7 @@ import java.util.List;
 public class CellId implements Iterator<TheDictionary>, Iterable<TheDictionary> {
 	private static final String TAG = CellId.class.getName();
 	private static boolean DEBUG = false;
-	static { DEBUG = Log.isLoggable("org.pyneo.proprorep", Log.DEBUG); }
+	static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 
 	private List<CellInfo> cellInfoList;
 	private int i = 0;

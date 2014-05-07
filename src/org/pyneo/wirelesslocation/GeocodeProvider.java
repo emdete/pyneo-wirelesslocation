@@ -11,7 +11,8 @@ import android.util.Log;
 
 public class GeocodeProvider extends internal.com.android.location.provider.GeocodeProvider {
 	private static final String TAG = GeocodeProvider.class.getName();
-	private static final boolean DEBUG = MainService.DEBUG;
+	private static boolean DEBUG = false;
+	static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 
 	private static final String UNKNOWN_RESULT_ERROR = "unknown";
 

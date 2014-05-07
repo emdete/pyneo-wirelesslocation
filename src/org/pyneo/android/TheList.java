@@ -14,7 +14,7 @@ import java.util.Iterator;
 public class TheList implements JSONStreamAware, JSONAware, Iterable<TheDictionary> {
 	private static final String TAG = TheList.class.getName();
 	private static boolean DEBUG = false;
-	static { DEBUG = Log.isLoggable("org.pyneo.proprorep", Log.DEBUG); }
+	static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 
 	private java.util.AbstractList<TheDictionary> list = new JSONArray();
 

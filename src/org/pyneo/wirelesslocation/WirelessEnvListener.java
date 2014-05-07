@@ -5,6 +5,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.CellIdentityCdma;
+import android.os.Build;
 import android.telephony.CellIdentityGsm;
 import android.telephony.CellIdentityLte;
 import android.telephony.CellIdentityWcdma;
@@ -35,19 +36,30 @@ import java.util.Collection;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.List;
+import org.pyneo.android.TheDictionary;
+import org.pyneo.android.TheList;
+import org.pyneo.android.cellapi.CellAPI2;
+import org.pyneo.android.wirelessid.CellId;
+import org.pyneo.android.wirelessid.CellIdPre17API;
+import org.pyneo.android.wirelessid.Meta;
+import org.pyneo.android.wirelessid.Satellite;
+import org.pyneo.android.wirelessid.WifiId;
 
 public class WirelessEnvListener extends PhoneStateListener implements Runnable {
 	private static final String TAG = WirelessEnvListener.class.getName();
-	private static final boolean DEBUG = MainService.DEBUG;
+	private static final boolean DEBUG = false;
+	static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 
 	ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
 	long intervalSecs = 5000;
 	TelephonyManager telephonyManager;
 	NetworkLocationProvider networkLocationProvider;
+	private TheDictionary meta_map = new TheDictionary();
 
 	WirelessEnvListener(Context context, NetworkLocationProvider networkLocationProvider) {
 		this.telephonyManager = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
 		this.networkLocationProvider = networkLocationProvider;
+		try { Meta.fill(meta_map, telephonyManager); } catch (Exception e) { Log.e(TAG, e.getMessage(), e); }
 	}
 
 	void setTime(long intervalSecs) {
@@ -69,16 +81,40 @@ public class WirelessEnvListener extends PhoneStateListener implements Runnable 
 	public void onCellInfoChanged(List<CellInfo> cellInfos) {
 		if (DEBUG) Log.d(TAG, "onCellInfoChanged: cellInfos=" + cellInfos);
 		try {
-			final Map<String,Object> map = new HashMap<String,Object>();
-			CellAPI.toMap(map, cellInfos, telephonyManager);
-			if (DEBUG) Log.d(TAG, "onCellInfoChanged: map=" + map);
+			Iterable<TheDictionary> cell_ids = null;
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+				if (cellInfos == null) {
+					cellInfos = telephonyManager.getAllCellInfo();
+					if (DEBUG) Log.e(TAG, "onCellInfoChanged: from parameter cellInfos=" + cellInfos);
+				}
+				cell_ids = new CellId(cellInfos);
+			}
+			if (cellInfos == null) {
+				if (DEBUG) Log.e(TAG, "onCellInfoChanged: fallback to Pre17, cellInfos=" + cellInfos);
+				cell_ids = new CellIdPre17API(telephonyManager, telephonyManager.getCellLocation(), telephonyManager.getNeighboringCellInfo());
+			}
+			if (DEBUG) Log.d(TAG, "onCellInfoChanged: cell_ids=" + cell_ids);
+			final TheList cellapi2_request = new TheList();
+			if (cell_ids != null) {
+				for (TheDictionary item: cell_ids) {
+					String ident = item.getIdent();
+					if (ident != null) { // check for complete id information
+						cellapi2_request.add(item);
+					}
+				}
+			}
 			telephonyManager.listen(this, PhoneStateListener.LISTEN_NONE);
 			executor.execute(new Runnable() {
 				public void run() {
-					Double[] location = CellAPI.retrieveLocation(map);
-					if (DEBUG) Log.d(TAG, "onCellInfoChanged: loc=" + Arrays.toString(location));
-					if (location != null) {
-						networkLocationProvider.onLocationChanged(dummy(location[0], location[1], location[2], location[3]));
+					try {
+						Location location = constructLocation(CellAPI2.retrieveLocation(meta_map, cellapi2_request, "single"));
+						if (DEBUG) Log.d(TAG, "onCellInfoChanged: location=" + location);
+						if (location != null) {
+							networkLocationProvider.onLocationChanged(location);
+						}
+					}
+					catch (Exception e) {
+						Log.e(TAG, e.getMessage(), e);
 					}
 				}
 			});
@@ -88,19 +124,34 @@ public class WirelessEnvListener extends PhoneStateListener implements Runnable 
 		}
 	}
 
-	static public Location dummy(double lat, double lon, double alt, double acc) {
-		Location location = new Location("network");
-		location.setProvider(NetworkLocationProvider.IDENTIFIER);
-		location.setLatitude(lat);
-		location.setLongitude(lon);
-		location.setAltitude(alt);
-		location.setAccuracy((float)acc);
-		location.setSpeed(0.0f);
-		location.setBearing(0.0f);
-		//location.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
-		location.setTime(System.currentTimeMillis());
-		androidLocationLocationMakeComplete(location);
-		androidLocationLocationSetExtraLocation(location, new Location(location));
+	static public Location constructLocation(TheList cellapi2_response) {
+		Location location = null;
+		for (TheDictionary ident_location: cellapi2_response) {
+			if (!ident_location.getString("type").equals("m")) {
+				long rcd = ident_location.getLong("rcd");
+				if (rcd / 1000 == 2) {
+					double latitude = ident_location.getDouble("latitude");
+					double longitude = ident_location.getDouble("longitude");
+					double accuracy = 5000.0;
+					if (rcd != 2010) { // radius not given
+						accuracy = ident_location.getDouble("accuracy");
+					}
+					location = new Location("network");
+					location.setProvider(NetworkLocationProvider.IDENTIFIER);
+					location.setLatitude(latitude);
+					location.setLongitude(longitude);
+					location.setAccuracy((float)accuracy);
+					//location.setAltitude(0.0);
+					//location.setSpeed(0.0f);
+					//location.setBearing(0.0f);
+					//location.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
+					location.setTime(System.currentTimeMillis());
+					androidLocationLocationMakeComplete(location);
+					androidLocationLocationSetExtraLocation(location, new Location(location));
+					break;
+				}
+			}
+		}
 		return location;
 	}
 

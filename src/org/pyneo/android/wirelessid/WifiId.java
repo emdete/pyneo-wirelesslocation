@@ -15,7 +15,7 @@ import java.util.List;
 public class WifiId implements Iterator<TheDictionary>, Iterable<TheDictionary> {
 	private static final String TAG = WifiId.class.getName();
 	private static boolean DEBUG = false;
-	static { DEBUG = Log.isLoggable("org.pyneo.proprorep", Log.DEBUG); }
+	static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 
 	private List<ScanResult> scanResults;
 	private int i;

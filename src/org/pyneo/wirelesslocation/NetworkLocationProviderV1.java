@@ -12,7 +12,8 @@ import android.util.Log;
 
 public class NetworkLocationProviderV1 extends LocationProvider implements NetworkLocationProvider {
 	private static final String TAG = NetworkLocationProviderV1.class.getName();
-	private static final boolean DEBUG = MainService.DEBUG;
+	private static boolean DEBUG = false;
+	static { DEBUG = Log.isLoggable("org.pyneo.android", Log.DEBUG); }
 
 	private long autoTime;
 	private boolean autoUpdate;

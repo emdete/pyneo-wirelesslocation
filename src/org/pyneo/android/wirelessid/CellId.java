@@ -181,8 +181,8 @@ public class CellId implements Iterator<TheDictionary>, Iterable<TheDictionary> 
 
 	public static void fill(TheDictionary map, CellSignalStrengthLte value) throws Exception {
 		if (value != null) {
-			map.put("timing_advance", value.getTimingAdvance());
 			int i;
+			i = value.getTimingAdvance(); if (i != Integer.MAX_VALUE) map.put("timing_advance", i);
 			i = value.getAsuLevel(); if (i != 99) map.put("asu_level", i);
 			map.put("dbm", value.getDbm());
 			map.put("level", value.getLevel());

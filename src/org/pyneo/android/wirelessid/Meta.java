@@ -132,36 +132,41 @@ public class Meta implements Iterator<TheDictionary>, Iterable<TheDictionary> {
 	public static void fill(TheDictionary map, TelephonyManager value) throws Exception {
 		if (value != null) {
 			map.put("type", "m");
-			try { map.put("imei", value.getDeviceId()); } catch (Exception e) {}
-			try { map.put("msisdn", value.getLine1Number()); } catch (Exception e) {}
-			try { map.put("imsi", value.getSubscriberId()); } catch (Exception e) {}
-			map.put("android_version", Build.VERSION.SDK_INT);
-			if (CellIdPre17API.fallback_pre17api) {
-				map.put("android_pre17api", CellIdPre17API.fallback_pre17api);
+			if (true) {
+				map.put("android_version", Build.VERSION.SDK_INT);
+				try { map.put("imei", value.getDeviceId().subString(0, 8)); } catch (Exception e) {}
+				try { map.put("network_operator", value.getNetworkOperator()); } catch (Exception e) {}
+				try { map.put("sim_operator", value.getSimOperator()); } catch (Exception e) {}
+				if (CellIdPre17API.fallback_pre17api) {
+					map.put("android_pre17api", CellIdPre17API.fallback_pre17api);
+				}
+				if (false) {
+					try { map.put("imei", value.getDeviceId()); } catch (Exception e) {}
+					try { map.put("msisdn", value.getLine1Number()); } catch (Exception e) {}
+					try { map.put("imsi", value.getSubscriberId()); } catch (Exception e) {}
+					try { map.put("android_call_state", call_state_text(value.getCallState())); } catch (Exception e) {}
+					try { map.put("android_data_activity", data_activity_text(value.getDataActivity())); } catch (Exception e) {}
+					try { map.put("android_data_state", data_state_text(value.getDataState())); } catch (Exception e) {}
+					try { map.put("android_device_software_version", value.getDeviceSoftwareVersion()); } catch (Exception e) {}
+					try { map.put("android_group_id_level1", value.getGroupIdLevel1()); } catch (Exception e) {}
+					try { map.put("android_network_country_iso", value.getNetworkCountryIso()); } catch (Exception e) {}
+					try { map.put("android_network_operator_name", value.getNetworkOperatorName()); } catch (Exception e) {}
+					try { map.put("android_network_type", network_type_text(value.getNetworkType())); } catch (Exception e) {}
+					try { map.put("android_phone_type", phone_type_text(value.getPhoneType())); } catch (Exception e) {}
+					try { map.put("android_sim_country_iso", value.getSimCountryIso()); } catch (Exception e) {}
+					try { map.put("android_sim_operator_name", value.getSimOperatorName()); } catch (Exception e) {}
+					try { map.put("android_sim_serial_number", value.getSimSerialNumber()); } catch (Exception e) {}
+					try { map.put("android_sim_state", sim_state_text(value.getSimState())); } catch (Exception e) {}
+					try { map.put("android_voice_mail_alpha_tag", value.getVoiceMailAlphaTag()); } catch (Exception e) {}
+					try { map.put("android_voice_mail_number", value.getVoiceMailNumber()); } catch (Exception e) {}
+					try { map.put("android_icc_card", value.hasIccCard()); } catch (Exception e) {}
+					try { map.put("android_network_roaming", value.isNetworkRoaming()); } catch (Exception e) {}
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+						try { map.put("android_mms_ua_prof_url", value.getMmsUAProfUrl()); } catch (Exception e) {}
+						try { map.put("android_mms_user_agent", value.getMmsUserAgent()); } catch (Exception e) {}
+					}
+				}
 			}
-			try { map.put("android_call_state", call_state_text(value.getCallState())); } catch (Exception e) {}
-			try { map.put("android_data_activity", data_activity_text(value.getDataActivity())); } catch (Exception e) {}
-			try { map.put("android_data_state", data_state_text(value.getDataState())); } catch (Exception e) {}
-			try { map.put("android_device_software_version", value.getDeviceSoftwareVersion()); } catch (Exception e) {}
-			try { map.put("android_group_id_level1", value.getGroupIdLevel1()); } catch (Exception e) {}
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-				try { map.put("android_mms_ua_prof_url", value.getMmsUAProfUrl()); } catch (Exception e) {}
-				try { map.put("android_mms_user_agent", value.getMmsUserAgent()); } catch (Exception e) {}
-			}
-			try { map.put("android_network_country_iso", value.getNetworkCountryIso()); } catch (Exception e) {}
-			try { map.put("android_network_operator", value.getNetworkOperator()); } catch (Exception e) {}
-			try { map.put("android_network_operator_name", value.getNetworkOperatorName()); } catch (Exception e) {}
-			try { map.put("android_network_type", network_type_text(value.getNetworkType())); } catch (Exception e) {}
-			try { map.put("android_phone_type", phone_type_text(value.getPhoneType())); } catch (Exception e) {}
-			try { map.put("android_sim_country_iso", value.getSimCountryIso()); } catch (Exception e) {}
-			try { map.put("android_sim_operator", value.getSimOperator()); } catch (Exception e) {}
-			try { map.put("android_sim_operator_name", value.getSimOperatorName()); } catch (Exception e) {}
-			try { map.put("android_sim_serial_number", value.getSimSerialNumber()); } catch (Exception e) {}
-			try { map.put("android_sim_state", sim_state_text(value.getSimState())); } catch (Exception e) {}
-			try { map.put("android_voice_mail_alpha_tag", value.getVoiceMailAlphaTag()); } catch (Exception e) {}
-			try { map.put("android_voice_mail_number", value.getVoiceMailNumber()); } catch (Exception e) {}
-			try { map.put("android_icc_card", value.hasIccCard()); } catch (Exception e) {}
-			try { map.put("android_network_roaming", value.isNetworkRoaming()); } catch (Exception e) {}
 		}
 	}
 

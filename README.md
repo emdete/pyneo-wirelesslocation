@@ -49,12 +49,12 @@ so by issuing `setprop log.tag.org.pyneo.android DEBUG` in a shell on
 the device.
 
 Building
-========
+--------
 
 This app is plain old stupid, no mvn, no gradle, only ant is needed.
 
 License
-=======
+-------
 
 The app itself is published under GPLv3. Feel free to use the code in you app
 as long as you follow the rules. I would be more than happy to recieve notice
@@ -62,15 +62,22 @@ if you do so while i do not require so. For further information see the file
 COPYING.
 
 WARRANTIES
-==========
+----------
 
 There are no WARRANTIES, neither for the software, nor the build process, or
 the information or anything around the project. If you start using this
 software you agree that you are competent to do so and are responsible for any
 kind of results doing so.
 
+Author
+------
+
+![mdt](https://emdete.de/michael.dietrich.jpg)
+
+Michael Dietrich <mdt@pyneo.org>
+
 Acknowledgment
-==============
+--------------
 
 The base for a location-provider is badly documented. So i used a different,
 wonderful project named μg which comes with a network location provider. Thanks

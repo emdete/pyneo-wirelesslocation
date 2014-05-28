@@ -55,6 +55,7 @@ public class WirelessEnvListener extends PhoneStateListener implements Runnable 
 	TelephonyManager telephonyManager;
 	NetworkLocationProvider networkLocationProvider;
 	private TheDictionary meta_map = new TheDictionary();
+	String last_ident;
 
 	WirelessEnvListener(Context context, NetworkLocationProvider networkLocationProvider) {
 		this.telephonyManager = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -95,29 +96,39 @@ public class WirelessEnvListener extends PhoneStateListener implements Runnable 
 			}
 			if (DEBUG) Log.d(TAG, "onCellInfoChanged: cell_ids=" + cell_ids);
 			final TheList cellapi2_request = new TheList();
+			boolean changed = false;
 			if (cell_ids != null) {
 				for (TheDictionary item: cell_ids) {
 					String ident = item.getIdent();
 					if (ident != null) { // check for complete id information
 						cellapi2_request.add(item);
+						if (item.getBoolean("registered") && ident.equals(last_ident)) {
+							changed = true;
+							last_ident = ident;
+						}
 					}
 				}
 			}
 			telephonyManager.listen(this, PhoneStateListener.LISTEN_NONE);
-			executor.execute(new Runnable() {
-				public void run() {
-					try {
-						Location location = constructLocation(CellAPI2.retrieveLocation(meta_map, cellapi2_request, "single"));
-						if (DEBUG) Log.d(TAG, "onCellInfoChanged: location=" + location);
-						if (location != null) {
-							networkLocationProvider.onLocationChanged(location);
+			if (changed) {
+				executor.execute(new Runnable() {
+					public void run() {
+						try {
+							Location location = constructLocation(CellAPI2.retrieveLocation(meta_map, cellapi2_request, "single"));
+							if (DEBUG) Log.d(TAG, "onCellInfoChanged: location=" + location);
+							if (location != null) {
+								networkLocationProvider.onLocationChanged(location);
+							}
+						}
+						catch (Exception e) {
+							Log.e(TAG, e.getMessage(), e);
 						}
 					}
-					catch (Exception e) {
-						Log.e(TAG, e.getMessage(), e);
-					}
-				}
-			});
+				});
+			}
+			else {
+				if (DEBUG) Log.e(TAG, "onCellInfoChanged: no change in environment, no request done");
+			}
 		}
 		catch (Exception e) {
 			Log.e(TAG, "e=" + e);
@@ -133,8 +144,8 @@ public class WirelessEnvListener extends PhoneStateListener implements Runnable 
 					double latitude = ident_location.getDouble("latitude");
 					double longitude = ident_location.getDouble("longitude");
 					double accuracy = 5000.0;
-					if (rcd != 2010) { // radius not given
-						accuracy = ident_location.getDouble("accuracy");
+					if (rcd != 2010 && ident_location.containsKey("radius")) { // radius given
+						accuracy = ident_location.getDouble("radius");
 					}
 					location = new Location("network");
 					location.setProvider(NetworkLocationProvider.IDENTIFIER);

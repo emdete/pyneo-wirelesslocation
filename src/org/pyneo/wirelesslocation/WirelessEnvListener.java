@@ -56,6 +56,7 @@ public class WirelessEnvListener extends PhoneStateListener implements Runnable 
 	NetworkLocationProvider networkLocationProvider;
 	private TheDictionary meta_map = new TheDictionary();
 	String last_ident;
+	Location last_location;
 
 	WirelessEnvListener(Context context, NetworkLocationProvider networkLocationProvider) {
 		this.telephonyManager = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -102,7 +103,7 @@ public class WirelessEnvListener extends PhoneStateListener implements Runnable 
 					String ident = item.getIdent();
 					if (ident != null) { // check for complete id information
 						cellapi2_request.add(item);
-						if (item.getBoolean("registered") && ident.equals(last_ident)) {
+						if (item.getBoolean("registered") && !ident.equals(last_ident)) {
 							changed = true;
 							last_ident = ident;
 						}
@@ -119,6 +120,7 @@ public class WirelessEnvListener extends PhoneStateListener implements Runnable 
 							if (location != null) {
 								networkLocationProvider.onLocationChanged(location);
 							}
+							last_location = location;
 						}
 						catch (Exception e) {
 							Log.e(TAG, e.getMessage(), e);
@@ -127,7 +129,10 @@ public class WirelessEnvListener extends PhoneStateListener implements Runnable 
 				});
 			}
 			else {
-				if (DEBUG) Log.e(TAG, "onCellInfoChanged: no change in environment, no request done");
+				if (DEBUG) Log.e(TAG, "onCellInfoChanged: no change in environment, no request done last_location=" + last_location);
+				if (last_location != null) {
+					networkLocationProvider.onLocationChanged(last_location);
+				}
 			}
 		}
 		catch (Exception e) {

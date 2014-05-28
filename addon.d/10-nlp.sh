@@ -3,6 +3,8 @@
 # /system/addon.d/10-nlp.sh
 #
 . /tmp/backuptool.functions
+# C == backupdir
+# S == systemdir
 
 list_files() {
 cat <<EOF

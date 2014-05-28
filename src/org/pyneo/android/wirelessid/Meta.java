@@ -134,7 +134,7 @@ public class Meta implements Iterator<TheDictionary>, Iterable<TheDictionary> {
 			map.put("type", "m");
 			if (true) {
 				map.put("android_version", Build.VERSION.SDK_INT);
-				try { map.put("imei", value.getDeviceId().subString(0, 8)); } catch (Exception e) {}
+				try { map.put("imei", value.getDeviceId().substring(0, 8)); } catch (Exception e) {}
 				try { map.put("network_operator", value.getNetworkOperator()); } catch (Exception e) {}
 				try { map.put("sim_operator", value.getSimOperator()); } catch (Exception e) {}
 				if (CellIdPre17API.fallback_pre17api) {

@@ -77,6 +77,8 @@ public class WirelessEnvListener extends PhoneStateListener implements Runnable 
 		if (DEBUG) Log.d(TAG, "disable:");
 		executor.shutdownNow();
 		executor = new ScheduledThreadPoolExecutor(1);
+		last_ident = null;
+		last_location = null;
 	}
 
 	@Override

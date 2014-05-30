@@ -42,7 +42,7 @@ public class MainService extends Service {
 
 	public boolean isActive() {
 		if (DEBUG) Log.d(TAG, "isActive:");
-		return nlprovider.isActive();
+		return nlprovider != null && nlprovider.isActive();
 	}
 
 	private static int androidProviderSettingsGlobalGetInt(ContentResolver contentResolver, String name, int defaultValue) {
@@ -61,7 +61,7 @@ public class MainService extends Service {
 	public IBinder onBind(final Intent intent) {
 		if (DEBUG) Log.d(TAG, "onBind: intent=" + intent);
 		IBinder ret = null;
-		if (intent != null) {
+		if (nlprovider != null && intent != null) {
 			String action = intent.getAction();
 			if (action != null) {
 				if (

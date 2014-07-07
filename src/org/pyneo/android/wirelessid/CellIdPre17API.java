@@ -69,17 +69,23 @@ public class CellIdPre17API implements Iterator<TheDictionary>, Iterable<TheDict
 			case TelephonyManager.NETWORK_TYPE_HSPAP:
 			case TelephonyManager.NETWORK_TYPE_HSUPA: {
 				map.put("type", "3");
-				int i = (Integer)map.get("cid");
-				map.put("cid", i % 0x10000);
-				map.put("rncid", i / 0x10000);
+				Integer i = (Integer)map.get("cid");
+				if (i != null) {
+					map.put("cid", i % 0x10000);
+					map.put("rncid", i / 0x10000);
+				}
 			}
 			break;
 			case TelephonyManager.NETWORK_TYPE_LTE: {
 				map.put("type", "4");
-				int i = (Integer)map.pop("lac");
-				map.put("tac", i);
+				Integer i = (Integer)map.pop("lac");
+				if (i != null) {
+					map.put("tac", i);
+				}
 				i = (Integer)map.pop("cid");
-				map.put("ci", i);
+				if (i != null) {
+					map.put("ci", i);
+				}
 			}
 			break;
 			case TelephonyManager.NETWORK_TYPE_EHRPD:

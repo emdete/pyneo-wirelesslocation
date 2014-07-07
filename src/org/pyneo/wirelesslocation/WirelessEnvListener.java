@@ -64,7 +64,7 @@ public class WirelessEnvListener extends PhoneStateListener implements Runnable 
 		try { Meta.fill(meta_map, telephonyManager); } catch (Exception e) { Log.e(TAG, e.getMessage(), e); }
 	}
 
-	void setTime(long intervalSecs) {
+	void setInterval(long intervalSecs) {
 		this.intervalSecs = intervalSecs;
 	}
 

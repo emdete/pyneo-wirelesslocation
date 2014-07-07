@@ -156,7 +156,8 @@ public class CellId implements Iterator<TheDictionary>, Iterable<TheDictionary> 
 
 	public static void fill(TheDictionary map, CellSignalStrengthCdma value) throws Exception {
 		if (value != null) {
-			map.put("asu_level", value.getAsuLevel());
+			int i;
+			i = value.getAsuLevel(); if (i != 99) map.put("asu_level", i);
 			map.put("dbm", value.getDbm());
 			map.put("level", value.getLevel());
 		}
@@ -164,7 +165,8 @@ public class CellId implements Iterator<TheDictionary>, Iterable<TheDictionary> 
 
 	public static void fill(TheDictionary map, CellSignalStrengthGsm value) throws Exception {
 		if (value != null) {
-			map.put("asu_level", value.getAsuLevel());
+			int i;
+			i = value.getAsuLevel(); if (i != 99) map.put("asu_level", i);
 			map.put("dbm", value.getDbm());
 			map.put("level", value.getLevel());
 		}
@@ -173,7 +175,8 @@ public class CellId implements Iterator<TheDictionary>, Iterable<TheDictionary> 
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 	public static void fill(TheDictionary map, CellSignalStrengthWcdma value) throws Exception {
 		if (value != null) {
-			map.put("asu_level", value.getAsuLevel());
+			int i;
+			i = value.getAsuLevel(); if (i != 99) map.put("asu_level", i);
 			map.put("dbm", value.getDbm());
 			map.put("level", value.getLevel());
 		}
